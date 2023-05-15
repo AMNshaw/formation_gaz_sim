@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+	<group ns="target">
+        <node name="keyboard_ctrl" pkg="formation_ctrl" type="keyboard_ctrl" output="screen"/>
+        <rosparam subst_value="true">
+                use_input: "velocity"  #velocity,position
+        </rosparam>
+    </group>
+</launch>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+        <arg name="SYS_ID" default="1"/>
+        <arg name="obs_gamma" default="0.8"/>
+        <arg name="mav_gamma" default="1.2"/>
+        <arg name="obs_safeDistance" default="3"/>
+        <arg name="mav_safeDistance" default="3"/>
+
+        <param name="mav_id" value="$(arg SYS_ID)" /> 
+        <param name="obs_gamma" value="$(arg obs_gamma)"/>
+        <param name="mav_gamma" value="$(arg mav_gamma)"/>
+        <param name="obs_safeDistance" value="$(arg obs_safeDistance)"/>
+        <param name="mav_safeDistance" value="$(arg mav_safeDistance)"/>
+
+        <node name="formation" pkg="formation_ctrl" type="formation"></node>
+        <node name="velocity_cbf" pkg="formation_ctrl" type="velocity_cbf" output="screen"></node>
+        
+</launch>
