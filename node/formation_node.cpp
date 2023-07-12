@@ -56,6 +56,23 @@ geometry_msgs::TwistStamped vel_limit(geometry_msgs::TwistStamped desired_vel, f
     return desired_vel;
 }
 
+void bound_yaw(double* yaw)
+{
+    if(*yaw>M_PI)
+        *yaw = *yaw - 2*M_PI;
+    else if(*yaw<-M_PI)
+        *yaw = *yaw + 2*M_PI;
+}
+
+void follow_yaw(geometry_msgs::TwistStamped& desired_vel, double current_yaw, double desired_yaw)
+{
+    double err_yaw, u_yaw;
+    err_yaw = desired_yaw - current_yaw;
+    bound_yaw( &err_yaw );
+    u_yaw = 2*err_yaw;
+    desired_vel.twist.angular.z = u_yaw;
+}
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "formation");
@@ -65,22 +82,22 @@ int main(int argc, char **argv)
     int uav_num = 4;
     //Subscriber
     MAV mav[4] = {MAV(nh, "/leader_pose", 0),
-                  MAV(nh, "/iris1/mavros/local_position/pose_initialized", 1),
-                  MAV(nh, "/iris2/mavros/local_position/pose_initialized", 2),
-                  MAV(nh, "/iris3/mavros/local_position/pose_initialized", 3)};
+                  MAV(nh, "/iris_1/mavros/local_position/pose_initialized", 1),
+                  MAV(nh, "/iris_2/mavros/local_position/pose_initialized", 2),
+                  MAV(nh, "/iris_3/mavros/local_position/pose_initialized", 3)};
 
     ros::Subscriber leader_vel_sub = nh.subscribe<geometry_msgs::TwistStamped>("/leader_vel", 10, leader_vel_cb);
     //Publisher    
     ros::Publisher desired_vel_pub = nh.advertise<geometry_msgs::TwistStamped>("desired_velocity_raw", 100);
 
     bool laplacian_map[5][5] = {1, 0, 0, 0, 0,
-                                1, 1, 0, 0, 0,
-                                1, 1, 1, 0, 0,
+                                1, 1, 1, 1, 0,
+                                1, 1, 1, 1, 0,
                                 1, 1, 1, 1, 0,
                                 1, 1, 1, 1, 0};
     
 
-    double d = 5.0;
+    double d = 4.0;
     double leader_uav_vector_x[5] = {0, 0,  sqrt(3)*d/2, -sqrt(3)*d/2, 0};  //active: mav2, mav4 
     double leader_uav_vector_y[5] = {0, d, -d/2,  -d/2, 0};  //vector y from leader to uav
     double relative_map_x[5][5];
@@ -97,7 +114,9 @@ int main(int argc, char **argv)
 
     geometry_msgs::TwistStamped desired_vel;
 
-    while (ros::ok()) {
+    while (ros::ok()) 
+    {
+        // linear
         desired_vel.twist.linear.x = 0;
         desired_vel.twist.linear.y = 0;
         desired_vel.twist.linear.z = 0;
@@ -119,7 +138,10 @@ int main(int argc, char **argv)
         desired_vel.twist.linear.y += leader_vel.twist.linear.y;
         desired_vel.twist.linear.z += leader_vel.twist.linear.z;
 
-        desired_vel = vel_limit(desired_vel, 5);
+        double desired_yaw = atan2(mav[0].getPose().pose.position.y - mav[MAV::self_id].getPose().pose.position.y, mav[0].getPose().pose.position.x - mav[MAV::self_id].getPose().pose.position.x);
+        follow_yaw(desired_vel, mav[MAV::self_id].getYaw(), desired_yaw);
+
+        desired_vel = vel_limit(desired_vel, 10);
         desired_vel_pub.publish(desired_vel);
 
         ros::spinOnce();

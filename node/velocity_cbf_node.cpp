@@ -47,14 +47,6 @@ struct CBF_param
 }cbf_param;
 
 
-void bound_yaw(double* yaw)
-{
-    if(*yaw>M_PI)
-        *yaw = *yaw - 2*M_PI;
-    else if(*yaw<-M_PI)
-        *yaw = *yaw + 2*M_PI;
-}
-
 void desired_vel_cb(const geometry_msgs::TwistStamped::ConstPtr& msg)
 {
     if(desired_input_init == false)
@@ -62,14 +54,6 @@ void desired_vel_cb(const geometry_msgs::TwistStamped::ConstPtr& msg)
     desired_vel_raw = *msg;
 }
 
-void follow_yaw(geometry_msgs::TwistStamped& desired_vel, double current_yaw, double desired_yaw)
-{
-    double err_yaw, u_yaw;
-    err_yaw = desired_yaw - current_yaw;
-    bound_yaw( &err_yaw );
-    u_yaw = KPyaw*err_yaw;
-    desired_vel.twist.angular.z = u_yaw;
-}
 
 int velocity_cbf(geometry_msgs::TwistStamped desired_vel_raw,geometry_msgs::TwistStamped* desired_vel, MAV mav[])
 {
@@ -110,11 +94,14 @@ int velocity_cbf(geometry_msgs::TwistStamped desired_vel_raw,geometry_msgs::Twis
                     pow((mav[i].getPose().pose.position.x - mav[MAV::self_id].getPose().pose.position.x ),2)+
                     pow((mav[i].getPose().pose.position.y - mav[MAV::self_id].getPose().pose.position.y ),2)-
                     pow(cbf_param.mav_safeDistance,2));
+                /*
                 if(mav[i].getVelInit() == true)
                     upperBound(j)+= -2*mav[i].getVel().twist.linear.x*(mav[i].getPose().pose.position.x - mav[MAV::self_id].getPose().pose.position.x)
                                   - 2*mav[i].getVel().twist.linear.y*(mav[i].getPose().pose.position.y - mav[MAV::self_id].getPose().pose.position.y);
-
+                
+                */
                 lowerBound(j) = -OsqpEigen::INFTY;
+
                 j++;
             }   
         }
@@ -185,9 +172,9 @@ int main(int argc, char **argv)
 
 
     MAV mav[4] = {MAV(nh, "/target/mavros/local_position/pose_initialized", "/target/mavros/local_position/velocity_local", 0),
-                  MAV(nh, "/iris1/mavros/local_position/pose_initialized", 1),
-                  MAV(nh, "/iris2/mavros/local_position/pose_initialized", 2),
-                  MAV(nh, "/iris3/mavros/local_position/pose_initialized", 3)};
+                  MAV(nh, "/iris_1/mavros/local_position/pose_initialized", 1),
+                  MAV(nh, "/iris_2/mavros/local_position/pose_initialized", 2),
+                  MAV(nh, "/iris_3/mavros/local_position/pose_initialized", 3)};
 
     ROS_INFO("Wait for pose and desired input init");
     while (ros::ok() && (!desired_input_init || !mav[MAV::self_id].getPoseInit())) {
@@ -265,7 +252,6 @@ int main(int argc, char **argv)
         else
             desired_vel = desired_vel_raw;
         
-        follow_yaw(desired_vel, mav[MAV::self_id].getYaw(), M_PI/2);
         local_vel_pub.publish(desired_vel);
 
         ros::spinOnce();

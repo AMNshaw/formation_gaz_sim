@@ -1,18 +1,18 @@
 <?xml version="1.0"?>
 <launch>
-        <group ns="iris1">
+        <group ns="iris_1">
                 <include file="$(find formation_ctrl)/launch/formation_cbf.launch">
                         <arg name="SYS_ID" value="1"/>
                 </include>
                 <node name="gps_init_py" pkg="formation_ctrl" type="gps_init.py" output="screen"></node>
         </group>
-        <group ns="iris2">
+        <group ns="iris_2">
                 <include file="$(find formation_ctrl)/launch/formation_cbf.launch">
                         <arg name="SYS_ID" value="2"/>
                 </include>
                 <node name="gps_init_py" pkg="formation_ctrl" type="gps_init.py" output="screen"></node>
         </group>
-        <group ns="iris3">
+        <group ns="iris_3">
                 <include file="$(find formation_ctrl)/launch/formation_cbf.launch">
                         <arg name="SYS_ID" value="3"/>
                 </include>
