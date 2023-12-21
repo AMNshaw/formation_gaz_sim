@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <launch>
-        <arg name="SYS_ID" default="1"/>
+        <arg name="SYS_ID" default="0"/>
         <arg name="obs_gamma" default="0.8"/>
         <arg name="mav_gamma" default="1.2"/>
-        <arg name="obs_safeDistance" default="3"/>
-        <arg name="mav_safeDistance" default="3"/>
+        <arg name="obs_safeDistance" default="2"/>
+        <arg name="mav_safeDistance" default="2"/>
 
         <param name="mav_id" value="$(arg SYS_ID)" /> 
         <param name="obs_gamma" value="$(arg obs_gamma)"/>

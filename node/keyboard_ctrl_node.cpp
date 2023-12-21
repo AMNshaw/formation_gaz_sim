@@ -206,7 +206,7 @@ int main(int argc, char **argv)
                 case 111:
                     desired_pose.pose.position.x = 0;
                     desired_pose.pose.position.y = 0;
-                    desired_pose.pose.position.z = 3;
+                    desired_pose.pose.position.z = 7;
                     break;
                 case 107:   // key kill(k)
                     return 0;
@@ -217,8 +217,8 @@ int main(int argc, char **argv)
         if(trajectory)
         {
             trajectory_time += 0.01;
-            desired_pose.pose.position.x = current_x + 2.5*cos(trajectory_time);
-            desired_pose.pose.position.y = current_y + 2.5*sin(trajectory_time);
+            desired_pose.pose.position.x = current_x + 2*cos(trajectory_time);
+            desired_pose.pose.position.y = current_y + 2*sin(trajectory_time);
         }
 
         desired_pose_pub.publish(desired_pose);
