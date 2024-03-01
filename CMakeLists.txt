@@ -11,11 +11,14 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  state_estimation
 )
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
+find_package(Eigen3 REQUIRED)
 find_package(OsqpEigen REQUIRED)
+
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -116,24 +119,48 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include ${catkin_INCLUDE_DIRS}
+  include
+  ${catkin_INCLUDE_DIRS}
+  ${EIGEN3_INCLUDE_DIRS}
 )
-
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
 #   src/${PROJECT_NAME}/formation_ctrl.cpp
 # )
 
+# Formation
+add_library(Formation
+  src/Formation.cpp
+)
+target_link_libraries(Formation 
+ ${catkin_LIBRARIES} )
+target_include_directories(Formation PRIVATE
+ include/${PROJECT_NAME}/ )
+
+# Velocity_cbf
+add_library(Velocity_cbf
+  src/Velocity_cbf.cpp
+)
+target_link_libraries(Velocity_cbf 
+${catkin_LIBRARIES}
+OsqpEigen::OsqpEigen 
+)
+target_include_directories(Velocity_cbf PRIVATE
+ include/${PROJECT_NAME}/ )
+
+######################### node ######################
 
 
-# offb_flight_test
-add_executable(offb_flight_test 
-  node/offb_flight_test.cpp 
-  src/getch.cpp )
-target_link_libraries(offb_flight_test 
-  ${catkin_LIBRARIES} )
-target_include_directories(offb_flight_test PRIVATE
-  include/${PROJECT_NAME}/ )
+# Formation_cbf_node
+add_executable(formation_cbf 
+  node/formation_cbf_node.cpp )
+target_link_libraries(formation_cbf 
+  ${catkin_LIBRARIES}
+  Formation
+  Velocity_cbf
+  )
+target_include_directories(formation_cbf PRIVATE
+  include/${PROJECT_NAME}/)
 
 # keyboard_ctrl
 add_executable(keyboard_ctrl 
@@ -144,25 +171,6 @@ target_link_libraries(keyboard_ctrl
 target_include_directories(keyboard_ctrl PRIVATE
   include/${PROJECT_NAME}/ )  
 
-# formation_node
-add_executable(formation 
-  node/formation_node.cpp
-  src/Mav.cpp)
-target_link_libraries(formation
-  ${catkin_LIBRARIES} )
-target_include_directories(formation PRIVATE
-  include/${PROJECT_NAME}/ ) 
-
-# velocity_cbf
-add_executable(velocity_cbf 
-  node/velocity_cbf_node.cpp 
-  src/Mav.cpp )
-target_link_libraries(velocity_cbf
-  ${catkin_LIBRARIES} 
-  OsqpEigen::OsqpEigen )
-target_include_directories(velocity_cbf PRIVATE
-  include/${PROJECT_NAME}/ )
-
 #   leader_pose
 add_executable(leader_pose node/leader_node.cpp
   src/getch.cpp)
@@ -171,6 +179,15 @@ target_link_libraries(leader_pose
 target_include_directories(leader_pose PRIVATE
   include/${PROJECT_NAME}/ )
 
+add_executable(cmd_node 
+  node/cmd_node_test.cpp
+  src/getch.cpp)
+target_link_libraries(cmd_node
+  ${catkin_LIBRARIES} )
+target_include_directories(cmd_node PRIVATE
+  include/${PROJECT_NAME}/ )
+
+  
 #############
 ## Install ##
 #############

@@ -180,7 +180,7 @@ int main(int argc, char **argv)
   ros::Publisher uav_takeoff_pub = nh.advertise<std_msgs::Int32>("/uav_takeoff", 10);
 
 
-  ros::Subscriber target_pose_sub = nh.subscribe<geometry_msgs::PoseStamped>("/target/mavros/local_position/pose_initialized", 10, target_pose_cb);
+  ros::Subscriber target_pose_sub = nh.subscribe<geometry_msgs::PoseStamped>("/target/formation/pose", 10, target_pose_cb);
   ros::Subscriber target_vel_sub = nh.subscribe<geometry_msgs::TwistStamped>("/target/mavros/local_position/velocity_local", 10, target_vel_cb);
 
   ros::Rate loop_rate(CONTROL_HZ);

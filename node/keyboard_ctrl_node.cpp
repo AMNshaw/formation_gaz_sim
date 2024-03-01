@@ -38,7 +38,7 @@ Mav::Mav(ros::NodeHandle &nh)
 {
     pose_init = false;
     mav_state_sub = nh.subscribe<mavros_msgs::State>("mavros/state", 10, &Mav::mav_state_cb, this);
-    current_pose_sub = nh.subscribe<geometry_msgs::PoseStamped>("mavros/local_position/pose", 10, &Mav::current_pose_cb, this);
+    current_pose_sub = nh.subscribe<geometry_msgs::PoseStamped>("formation/pose", 10, &Mav::current_pose_cb, this);
 }
 
 void Mav::mav_state_cb(const mavros_msgs::State::ConstPtr& msg) 
@@ -119,7 +119,7 @@ int main(int argc, char **argv)
     geometry_msgs::PoseStamped desired_pose;
     desired_pose.pose.position.x = 0;
     desired_pose.pose.position.y = 0;
-    desired_pose.pose.position.z = 2;
+    desired_pose.pose.position.z = 0;
 
     //send a few setpoints before starting
     for(int i = 100; ros::ok() && i > 0; --i){
@@ -217,8 +217,8 @@ int main(int argc, char **argv)
         if(trajectory)
         {
             trajectory_time += 0.01;
-            desired_pose.pose.position.x = current_x + 2*cos(trajectory_time);
-            desired_pose.pose.position.y = current_y + 2*sin(trajectory_time);
+            desired_pose.pose.position.x = current_x + 4*cos(trajectory_time);
+            desired_pose.pose.position.y = current_y + 4*sin(trajectory_time);
         }
 
         desired_pose_pub.publish(desired_pose);
