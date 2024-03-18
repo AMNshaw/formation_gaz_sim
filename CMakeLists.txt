@@ -171,16 +171,8 @@ target_link_libraries(keyboard_ctrl
 target_include_directories(keyboard_ctrl PRIVATE
   include/${PROJECT_NAME}/ )  
 
-#   leader_pose
-add_executable(leader_pose node/leader_node.cpp
-  src/getch.cpp)
-target_link_libraries(leader_pose
-  ${catkin_LIBRARIES} )
-target_include_directories(leader_pose PRIVATE
-  include/${PROJECT_NAME}/ )
-
 add_executable(cmd_node 
-  node/cmd_node_test.cpp
+  node/cmd_node.cpp
   src/getch.cpp)
 target_link_libraries(cmd_node
   ${catkin_LIBRARIES} )

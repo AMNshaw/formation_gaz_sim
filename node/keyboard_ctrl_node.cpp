@@ -130,7 +130,7 @@ int main(int argc, char **argv)
 
     ROS_INFO("Vehicle is ready to start");
     
-    float move_step = 0.1;
+    double move_step = 0.1;
     double desired_yaw = 0;
     bool trajectory = false;
     double trajectory_time = 0;
@@ -192,7 +192,7 @@ int main(int argc, char **argv)
                     desired_pose.pose.position.x += move_step;
                     break;
                 case 108:    // key land(l)
-                    desired_pose.pose.position.z = 0;
+                    desired_pose.pose.position.z = 0.5;
                     break;
                 case 101:    // key trajectory_CCW(e)
                     trajectory = true;
@@ -206,7 +206,7 @@ int main(int argc, char **argv)
                 case 111:
                     desired_pose.pose.position.x = 0;
                     desired_pose.pose.position.y = 0;
-                    desired_pose.pose.position.z = 7;
+                    desired_pose.pose.position.z = 5;
                     break;
                 case 107:   // key kill(k)
                     return 0;
@@ -217,8 +217,8 @@ int main(int argc, char **argv)
         if(trajectory)
         {
             trajectory_time += 0.01;
-            desired_pose.pose.position.x = current_x + 4*cos(trajectory_time);
-            desired_pose.pose.position.y = current_y + 4*sin(trajectory_time);
+            desired_pose.pose.position.x = current_x + 1.5*cos(trajectory_time);
+            desired_pose.pose.position.y = current_y + 1.5*sin(trajectory_time);
         }
 
         desired_pose_pub.publish(desired_pose);

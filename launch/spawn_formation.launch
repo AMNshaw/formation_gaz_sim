@@ -26,8 +26,8 @@
         <arg name="fcu_url" default="udp://:14540@localhost:14580"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn_sdf.launch">
-            <arg name="x" value="3"/>
-            <arg name="y" value="3"/>
+            <arg name="x" value="0"/>
+            <arg name="y" value="0"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
@@ -53,11 +53,11 @@
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn_sdf.launch">
             <arg name="x" value="0"/>
-            <arg name="y" value="0"/>
+            <arg name="y" value="2"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
-            <arg name="Y" value="0"/>
+            <arg name="Y" value="4.71"/>
             <arg name="vehicle" value="$(arg vehicle)"/>
             <arg name="mavlink_udp_port" value="14561"/>
             <arg name="mavlink_tcp_port" value="4561"/>
@@ -78,12 +78,12 @@
         <arg name="fcu_url" default="udp://:14542@localhost:14582"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn_sdf.launch">
-            <arg name="x" value="-1"/>
-            <arg name="y" value="-1"/>
+            <arg name="x" value="5"/>
+            <arg name="y" value="0"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
-            <arg name="Y" value="0"/>
+            <arg name="Y" value="2.618"/>
             <arg name="vehicle" value="$(arg vehicle)"/>
             <arg name="mavlink_udp_port" value="14562"/>
             <arg name="mavlink_tcp_port" value="4562"/>
@@ -104,12 +104,12 @@
         <arg name="fcu_url" default="udp://:14543@localhost:14583"/>
         <!-- PX4 SITL and vehicle spawn -->
         <include file="$(find px4)/launch/single_vehicle_spawn_sdf.launch">
-            <arg name="x" value="1"/>
-            <arg name="y" value="0"/>
+            <arg name="x" value="-1"/>
+            <arg name="y" value="-1"/>
             <arg name="z" value="0"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
-            <arg name="Y" value="0"/>
+            <arg name="Y" value="0.5236"/>
             <arg name="vehicle" value="$(arg vehicle)"/>
             <arg name="mavlink_udp_port" value="14563"/>
             <arg name="mavlink_tcp_port" value="4563"/>

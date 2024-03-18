@@ -3,7 +3,7 @@
         <group ns="iris_1">
                 <node name="formation_cbf" pkg="formation_ctrl" type="formation_cbf" output="screen"></node>
                 <node name="gps_init_py" pkg="formation_ctrl" type="gps_init.py" output="screen"></node>
-                <param name="mav_id" value="1" /> 
+                <param name="mav_id" value="1" />
         </group>
         <group ns="iris_2">
                 <node name="formation_cbf" pkg="formation_ctrl" type="formation_cbf"></node>
