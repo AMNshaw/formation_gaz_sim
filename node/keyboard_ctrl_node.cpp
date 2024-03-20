@@ -217,8 +217,8 @@ int main(int argc, char **argv)
         if(trajectory)
         {
             trajectory_time += 0.01;
-            desired_pose.pose.position.x = current_x + 1.5*cos(trajectory_time);
-            desired_pose.pose.position.y = current_y + 1.5*sin(trajectory_time);
+            desired_pose.pose.position.x = current_x + 2*cos(trajectory_time);
+            desired_pose.pose.position.y = current_y + 2*sin(trajectory_time);
         }
 
         desired_pose_pub.publish(desired_pose);

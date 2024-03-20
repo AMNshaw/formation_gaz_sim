@@ -110,33 +110,45 @@ class CMD
                 else
                     ROS_INFO("UAV_%i failed to switch offb_mode", ID);
             }
-            
         }
+        int mode_CMD(){return mode_cmd;}
 };
 
 class Target_EST_FeedBack
 {
 private:
     ros::Subscriber target_est_sub;
-    ros::Subscriber isTargetEst_sub;
+    ros::Subscriber isTargetEst_sub1;
+    ros::Subscriber isTargetEst_sub2;
+    ros::Subscriber isTargetEst_sub3;
     geometry_msgs::Pose target_est_pose;
     geometry_msgs::Twist target_est_twist;
     
 public:
-    bool isEst = false;
+    bool estimating[3];
     Target_EST_FeedBack(ros::NodeHandle& nh_)
     {   
         target_est_sub = nh_.subscribe<state_estimation::Plot>("THEIF/Plot", 10, &Target_EST_FeedBack::est_state_cb, this);
-        isTargetEst_sub = nh_.subscribe<std_msgs::Bool>("THEIF/isTargetEst", 10, &Target_EST_FeedBack::isTargetEst_cb, this);
+        isTargetEst_sub1 = nh_.subscribe<std_msgs::Bool>("/iris_1/THEIF/isTargetEst", 10, &Target_EST_FeedBack::isTargetEst_cb1, this);
+        isTargetEst_sub2 = nh_.subscribe<std_msgs::Bool>("/iris_2/THEIF/isTargetEst", 10, &Target_EST_FeedBack::isTargetEst_cb2, this);
+        isTargetEst_sub3 = nh_.subscribe<std_msgs::Bool>("/iris_3/THEIF/isTargetEst", 10, &Target_EST_FeedBack::isTargetEst_cb3, this);
     }
     void est_state_cb(const state_estimation::Plot::ConstPtr& msg)
     {
         target_est_pose = msg->est_pose;
         target_est_twist = msg->est_twist;
     }
-    void isTargetEst_cb(const std_msgs::Bool::ConstPtr& msg)
+    void isTargetEst_cb1(const std_msgs::Bool::ConstPtr& msg)
     {
-        isEst = msg->data;
+        estimating[0] = msg->data;
+    }
+    void isTargetEst_cb2(const std_msgs::Bool::ConstPtr& msg)
+    {
+        estimating[1] = msg->data;
+    }
+    void isTargetEst_cb3(const std_msgs::Bool::ConstPtr& msg)
+    {
+        estimating[2] = msg->data;
     }
     geometry_msgs::Pose getPose(){return target_est_pose;}
     geometry_msgs::Twist getTwist(){return target_est_twist;}
@@ -213,7 +225,7 @@ int main(int argc, char **argv)
 
         if(cmd.vision_tracking)
         {
-            if(target.isEst)
+            if(target.estimating[0] || target.estimating[1] || target.estimating[2])
             {
                 std::cout << "Vision tracking mode\n\n";
                 mavs[0].setPose(target.getPose());
@@ -240,21 +252,23 @@ int main(int argc, char **argv)
         Eigen::Vector3d ang_vel = Eigen::Vector3d::Zero();
         ang_vel(2) = yaw_vel;
 
-        if((ros::Time::now() - mavs[Formation::ID].getPose().header.stamp)<ros::Duration(0.1))
+        final_vel = formation_vel;
+        if(cmd.mode_CMD() == 5)
         {
-            if(CBF.CBF_init(6, 3))
+            
+            if((ros::Time::now() - mavs[Formation::ID].getPose().header.stamp)<ros::Duration(0.1))
             {
-                if(CBF.computeCBF(formation_vel, ang_vel))
+                if(CBF.CBF_init(6))
                 {
-                    final_vel = CBF.getOptimizedVel();
+                    if(CBF.computeCBF(formation_vel, ang_vel))
+                    {
+                        final_vel = CBF.getOptimizedVel();
+                    }
+                    else
+                        final_vel = formation_vel;
                 }
-                else
-                    final_vel = formation_vel;
-            }
+            }                
         }
-        else
-            final_vel = formation_vel;
-
         vel_msg.header.stamp = ros::Time::now();
         vel_msg.twist.linear.x = final_vel(0);
         vel_msg.twist.linear.y = final_vel(1);
@@ -262,8 +276,8 @@ int main(int argc, char **argv)
         vel_msg.twist.angular.z = yaw_vel;
         if(final_vel.size() > 3)
         {
-            // vel_msg.twist.angular.x = final_vel(3);
-            // vel_msg.twist.angular.y = final_vel(4);
+            vel_msg.twist.angular.x = final_vel(3);
+            vel_msg.twist.angular.y = final_vel(4);
             vel_msg.twist.angular.z = final_vel(5);
         }
         

@@ -52,7 +52,7 @@ int main(int argc, char **argv)
 	
 	leader_pose.pose.position.x = 0;
 	leader_pose.pose.position.y = 0;
-	leader_pose.pose.position.z = 5;
+	leader_pose.pose.position.z = 10;
 	while (ros::ok())
 	{
 		
