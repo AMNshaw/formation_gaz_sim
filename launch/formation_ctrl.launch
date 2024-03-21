@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <launch>
-        <group ns="iris_1">
+        <group ns="uav1">
                 <node name="formation_cbf" pkg="formation_ctrl" type="formation_cbf" output="screen"></node>
                 <node name="gps_init_py" pkg="formation_ctrl" type="gps_init.py" output="screen"></node>
                 <param name="mav_id" value="1" />
         </group>
-        <group ns="iris_2">
+        <group ns="uav2">
                 <node name="formation_cbf" pkg="formation_ctrl" type="formation_cbf"></node>
                 <node name="gps_init_py" pkg="formation_ctrl" type="gps_init.py" output="screen"></node>
                 <param name="mav_id" value="2" /> 
         </group>
-        <group ns="iris_3">
+        <group ns="uav3">
                 <node name="formation_cbf" pkg="formation_ctrl" type="formation_cbf"></node>
                 <node name="gps_init_py" pkg="formation_ctrl" type="gps_init.py" output="screen"></node>
                 <param name="mav_id" value="3" /> 

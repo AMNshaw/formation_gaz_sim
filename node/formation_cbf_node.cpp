@@ -129,9 +129,9 @@ public:
     Target_EST_FeedBack(ros::NodeHandle& nh_)
     {   
         target_est_sub = nh_.subscribe<state_estimation::Plot>("THEIF/Plot", 10, &Target_EST_FeedBack::est_state_cb, this);
-        isTargetEst_sub1 = nh_.subscribe<std_msgs::Bool>("/iris_1/THEIF/isTargetEst", 10, &Target_EST_FeedBack::isTargetEst_cb1, this);
-        isTargetEst_sub2 = nh_.subscribe<std_msgs::Bool>("/iris_2/THEIF/isTargetEst", 10, &Target_EST_FeedBack::isTargetEst_cb2, this);
-        isTargetEst_sub3 = nh_.subscribe<std_msgs::Bool>("/iris_3/THEIF/isTargetEst", 10, &Target_EST_FeedBack::isTargetEst_cb3, this);
+        isTargetEst_sub1 = nh_.subscribe<std_msgs::Bool>("/uav1/THEIF/isTargetEst", 10, &Target_EST_FeedBack::isTargetEst_cb1, this);
+        isTargetEst_sub2 = nh_.subscribe<std_msgs::Bool>("/uav2/THEIF/isTargetEst", 10, &Target_EST_FeedBack::isTargetEst_cb2, this);
+        isTargetEst_sub3 = nh_.subscribe<std_msgs::Bool>("/uav3/THEIF/isTargetEst", 10, &Target_EST_FeedBack::isTargetEst_cb3, this);
     }
     void est_state_cb(const state_estimation::Plot::ConstPtr& msg)
     {
@@ -162,10 +162,10 @@ int main(int argc, char **argv)
 
     ros::Publisher vel_cmd_pub = nh.advertise<geometry_msgs::TwistStamped>("mavros/setpoint_velocity/cmd_vel", 10);
 
-    MAV mavs[]={MAV(nh, "iris", 0),
-                MAV(nh, "iris", 1),
-                MAV(nh, "iris", 2),
-                MAV(nh, "iris", 3)};
+    MAV mavs[]={MAV(nh, "target", 0),
+                MAV(nh, "uav", 1),
+                MAV(nh, "uav", 2),
+                MAV(nh, "uav", 3)};
     int mavNum = sizeof(mavs)/sizeof(mavs[0]);
     int ID;
     std::vector<MAV_eigen> Mavs_eigen(mavNum);

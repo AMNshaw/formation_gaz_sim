@@ -4,8 +4,9 @@
     <!-- launches Gazebo environment and 2x: MAVROS, PX4 SITL, and spawns vehicle -->
     <!-- vehicle model and world -->
     <arg name="est" default="ekf2"/>
-    <arg name="vehicle" default="iris"/>
-    <arg name="world" default="$(find mavlink_sitl_gazebo)/worlds/empty.world"/>
+    <arg name="vehicle" default="typhoon_h480"/>
+    <arg name="name" default="uav"/>
+    <arg name="world" default="$(find mavlink_sitl_gazebo)/worlds/typhoon_h480.world"/>
     <!-- gazebo configs -->
     <arg name="gui" default="true"/>
     <arg name="debug" default="false"/>
@@ -32,6 +33,7 @@
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
             <arg name="Y" value="0"/>
+            <arg name="name" value="target"/>
             <arg name="vehicle" value="solo"/>
             <arg name="mavlink_udp_port" value="14560"/>
             <arg name="mavlink_tcp_port" value="4560"/>
@@ -46,7 +48,7 @@
         </include>
     </group>
     <!-- UAV1 -->
-    <group ns="iris_1">
+    <group ns="$(arg name)1">
         <!-- MAVROS and vehicle configs -->
         <arg name="ID" value="1"/>
         <arg name="fcu_url" default="udp://:14541@localhost:14581"/>
@@ -54,10 +56,11 @@
         <include file="$(find px4)/launch/single_vehicle_spawn_sdf.launch">
             <arg name="x" value="0"/>
             <arg name="y" value="2"/>
-            <arg name="z" value="0"/>
+            <arg name="z" value="0.1"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
-            <arg name="Y" value="4.71"/>
+            <arg name="Y" value="0"/>
+            <arg name="name" value="$(arg name)1"/>
             <arg name="vehicle" value="$(arg vehicle)"/>
             <arg name="mavlink_udp_port" value="14561"/>
             <arg name="mavlink_tcp_port" value="4561"/>
@@ -72,7 +75,7 @@
         </include>
     </group>
     <!-- UAV2 -->
-    <group ns="iris_2">
+    <group ns="$(arg name)2">
         <!-- MAVROS and vehicle configs -->
         <arg name="ID" value="2"/>
         <arg name="fcu_url" default="udp://:14542@localhost:14582"/>
@@ -80,10 +83,11 @@
         <include file="$(find px4)/launch/single_vehicle_spawn_sdf.launch">
             <arg name="x" value="5"/>
             <arg name="y" value="0"/>
-            <arg name="z" value="0"/>
+            <arg name="z" value="0.1"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
-            <arg name="Y" value="2.618"/>
+            <arg name="Y" value="0"/>
+            <arg name="name" value="$(arg name)2"/>
             <arg name="vehicle" value="$(arg vehicle)"/>
             <arg name="mavlink_udp_port" value="14562"/>
             <arg name="mavlink_tcp_port" value="4562"/>
@@ -98,7 +102,7 @@
         </include>
     </group>
     <!-- UAV3 -->
-    <group ns="iris_3">
+    <group ns="$(arg name)3">
         <!-- MAVROS and vehicle configs -->
         <arg name="ID" value="3"/>
         <arg name="fcu_url" default="udp://:14543@localhost:14583"/>
@@ -106,10 +110,11 @@
         <include file="$(find px4)/launch/single_vehicle_spawn_sdf.launch">
             <arg name="x" value="-1"/>
             <arg name="y" value="-1"/>
-            <arg name="z" value="0"/>
+            <arg name="z" value="0.1"/>
             <arg name="R" value="0"/>
             <arg name="P" value="0"/>
-            <arg name="Y" value="0.5236"/>
+            <arg name="Y" value="0"/>
+            <arg name="name" value="$(arg name)3"/>
             <arg name="vehicle" value="$(arg vehicle)"/>
             <arg name="mavlink_udp_port" value="14563"/>
             <arg name="mavlink_tcp_port" value="4563"/>

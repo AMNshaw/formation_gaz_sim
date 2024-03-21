@@ -55,18 +55,19 @@ Eigen::Vector3d Formation::computeDesiredLVelocity(double dt)
     {
         if(laplacianMap[ID][i])
         {
-            desiredVel(0) += (Mavs_eigen[i].r(0) - Mavs_eigen[ID].r(0) + relative_Map[ID][i](0));
-            desiredVel(1) += (Mavs_eigen[i].r(1) - Mavs_eigen[ID].r(1) + relative_Map[ID][i](1));
+            desiredVel(0) += 0.3*(Mavs_eigen[i].r(0) - Mavs_eigen[ID].r(0) + relative_Map[ID][i](0));
+            desiredVel(1) += 0.3*(Mavs_eigen[i].r(1) - Mavs_eigen[ID].r(1) + relative_Map[ID][i](1));
             //desiredVel(2) += (Mavs_eigen[i].r(2) - Mavs_eigen[ID].r(2));
         
-            virtualAcc += 2*(Mavs_eigen[i].v - Mavs_eigen[ID].v);
+            virtualAcc += (Mavs_eigen[i].v - Mavs_eigen[ID].v);
         }
     }
     desiredVel(0) += (Mavs_eigen[0].r(0) - Mavs_eigen[ID].r(0) + relative_Map[ID][0](0));
     desiredVel(1) += (Mavs_eigen[0].r(1) - Mavs_eigen[ID].r(1) + relative_Map[ID][0](1));
     desiredVel(2) += (Mavs_eigen[0].r(2) - Mavs_eigen[ID].r(2));
+    desiredVel(2) += 0.5;
 
-    virtualAcc += 10*(Mavs_eigen[0].v - Mavs_eigen[ID].v);
+    virtualAcc += 20*(Mavs_eigen[0].v - Mavs_eigen[ID].v);
     // desiredVel(0) += Mavs_eigen[0].v(0);
     // desiredVel(1) += Mavs_eigen[0].v(1);
     

@@ -12,50 +12,7 @@
 #include <geometry_msgs/Point.h>
 #include <eigen3/Eigen/Dense>
 #include <queue>
-
-
-class Mav
-{
-private:
-    bool pose_init;
-    mavros_msgs::State current_state;
-    geometry_msgs::PoseStamped current_pose;
-
-    ros::Subscriber current_pose_sub;
-    ros::Subscriber mav_state_sub;
-
-public:
-    Mav();
-    Mav(ros::NodeHandle &nh);
-    void mav_state_cb(const mavros_msgs::State::ConstPtr& msg);
-    void current_pose_cb(const geometry_msgs::PoseStamped::ConstPtr& msg);
-    geometry_msgs::PoseStamped getCurrentPose();
-    mavros_msgs::State getCurrentState();
-    bool getPoseInit();
-};
-
-Mav::Mav(ros::NodeHandle &nh)
-{
-    pose_init = false;
-    mav_state_sub = nh.subscribe<mavros_msgs::State>("mavros/state", 10, &Mav::mav_state_cb, this);
-    current_pose_sub = nh.subscribe<geometry_msgs::PoseStamped>("formation/pose", 10, &Mav::current_pose_cb, this);
-}
-
-void Mav::mav_state_cb(const mavros_msgs::State::ConstPtr& msg) 
-{
-    current_state = *msg;
-}
-
-void Mav::current_pose_cb(const geometry_msgs::PoseStamped::ConstPtr& msg) 
-{
-    if(pose_init == false)
-        pose_init = true;
-    current_pose = *msg;
-}
-
-geometry_msgs::PoseStamped Mav::getCurrentPose(){return current_pose;}
-bool Mav::getPoseInit(){return pose_init;}
-mavros_msgs::State Mav::getCurrentState(){return current_state;}
+#include <state_estimation/Mav.h>
 
 void bound_yaw(double* yaw){
         if(*yaw>M_PI)
@@ -71,7 +28,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     // object
-    Mav mav(nh);
+    MAV mav(nh, "target", 0);
 
     // publisher
     ros::Publisher desired_pose_pub = nh.advertise<geometry_msgs::PoseStamped>("mavros/setpoint_position/local", 10);
@@ -87,16 +44,16 @@ int main(int argc, char **argv)
     // cmd_msgs
 
     ROS_INFO("Wait for pose and desired input init");
-    while (ros::ok() && (!mav.getPoseInit())) 
+    while (ros::ok() && (!mav.pose_init)) 
     {
         ros::spinOnce();
         rate.sleep();
-        ROS_INFO("Wait for pose init %d",mav.getPoseInit());
+        ROS_INFO("Wait for pose init %d",mav.pose_init);
     }
     ROS_INFO("pose initialized");
     
     ROS_INFO("Wait for FCU connection");
-    while (ros::ok() && !mav.getCurrentState().connected) {
+    while (ros::ok() && !mav.getState().connected) {
         ros::spinOnce();
         rate.sleep();
         ROS_INFO("Wait for FCU");
@@ -139,7 +96,7 @@ int main(int argc, char **argv)
     while (ros::ok()) 
     {
         
-        if (mav.getCurrentState().mode != "OFFBOARD" &&
+        if (mav.getState().mode != "OFFBOARD" &&
                 (ros::Time::now() - last_request > ros::Duration(2.0))) {
             if( set_mode_client.call(offb_set_mode) &&
                     offb_set_mode.response.mode_sent) {
@@ -148,7 +105,7 @@ int main(int argc, char **argv)
             last_request = ros::Time::now();
         } else {
 
-            if (!mav.getCurrentState().armed &&
+            if (!mav.getState().armed &&
                     (ros::Time::now() - last_request > ros::Duration(2.0))) {
                 if( arming_client.call(arm_cmd) &&
                         arm_cmd.response.success) {
@@ -197,8 +154,8 @@ int main(int argc, char **argv)
                 case 101:    // key trajectory_CCW(e)
                     trajectory = true;
                     trajectory_time = 0;
-                    current_x = mav.getCurrentPose().pose.position.x;
-                    current_y = mav.getCurrentPose().pose.position.y;
+                    current_x = mav.getPose().pose.position.x;
+                    current_y = mav.getPose().pose.position.y;
                     break;
                 case 112:    // key stop trajectory(p)
                     trajectory = false;
@@ -206,7 +163,7 @@ int main(int argc, char **argv)
                 case 111:
                     desired_pose.pose.position.x = 0;
                     desired_pose.pose.position.y = 0;
-                    desired_pose.pose.position.z = 5;
+                    desired_pose.pose.position.z = 8;
                     break;
                 case 107:   // key kill(k)
                     return 0;

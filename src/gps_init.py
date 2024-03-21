@@ -23,8 +23,7 @@ class GPS_init:
 		rospy.init_node('gps_init_py', anonymous=True)
 		
 		self.pose_init_sub = rospy.Subscriber('/uav_init', Int32, self.pose_init_cb)
-		#self.gps_origin_sub = rospy.Subscriber('/iris_1/mavros/global_position/global', NavSatFix, self.gps_origin_cb)
-		self.gps_origin_sub = rospy.Subscriber('/iris_1/mavros/home_position/home', HomePosition, self.gps_origin_cb)
+		self.gps_origin_sub = rospy.Subscriber('/target/mavros/home_position/home', HomePosition, self.gps_origin_cb)
 		self.gps_self_sub = rospy.Subscriber('mavros/global_position/global', NavSatFix, self.gps_self_cb)
 		self.gps_pose_sub = rospy.Subscriber('mavros/local_position/pose', PoseStamped, self.pose_cb)
 		
