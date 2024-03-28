@@ -1,16 +1,19 @@
 <?xml version="1.0"?>
+
 <launch>
-        <group ns="uav1">
+        <arg name="vehicle" default="typhoon_h480"/>
+
+        <group ns="$(arg vehicle)_1">
                 <node name="formation_cbf" pkg="formation_ctrl" type="formation_cbf" output="screen"></node>
                 <node name="gps_init_py" pkg="formation_ctrl" type="gps_init.py" output="screen"></node>
                 <param name="mav_id" value="1" />
         </group>
-        <group ns="uav2">
+        <group ns="$(arg vehicle)_2">
                 <node name="formation_cbf" pkg="formation_ctrl" type="formation_cbf"></node>
                 <node name="gps_init_py" pkg="formation_ctrl" type="gps_init.py" output="screen"></node>
                 <param name="mav_id" value="2" /> 
         </group>
-        <group ns="uav3">
+        <group ns="$(arg vehicle)_3">
                 <node name="formation_cbf" pkg="formation_ctrl" type="formation_cbf"></node>
                 <node name="gps_init_py" pkg="formation_ctrl" type="gps_init.py" output="screen"></node>
                 <param name="mav_id" value="3" /> 

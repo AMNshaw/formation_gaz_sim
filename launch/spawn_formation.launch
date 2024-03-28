@@ -5,7 +5,7 @@
     <!-- vehicle model and world -->
     <arg name="est" default="ekf2"/>
     <arg name="vehicle" default="typhoon_h480"/>
-    <arg name="name" default="uav"/>
+    <arg name="name" default="typhoon_h480"/>
     <arg name="world" default="$(find mavlink_sitl_gazebo)/worlds/typhoon_h480.world"/>
     <!-- gazebo configs -->
     <arg name="gui" default="true"/>
@@ -48,7 +48,7 @@
         </include>
     </group>
     <!-- UAV1 -->
-    <group ns="$(arg name)1">
+    <group ns="$(arg name)_1">
         <!-- MAVROS and vehicle configs -->
         <arg name="ID" value="1"/>
         <arg name="fcu_url" default="udp://:14541@localhost:14581"/>
@@ -75,7 +75,7 @@
         </include>
     </group>
     <!-- UAV2 -->
-    <group ns="$(arg name)2">
+    <group ns="$(arg name)_2">
         <!-- MAVROS and vehicle configs -->
         <arg name="ID" value="2"/>
         <arg name="fcu_url" default="udp://:14542@localhost:14582"/>
@@ -102,7 +102,7 @@
         </include>
     </group>
     <!-- UAV3 -->
-    <group ns="$(arg name)3">
+    <group ns="$(arg name)_3">
         <!-- MAVROS and vehicle configs -->
         <arg name="ID" value="3"/>
         <arg name="fcu_url" default="udp://:14543@localhost:14583"/>
